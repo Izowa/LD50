@@ -23,9 +23,16 @@ public class Player : MonoBehaviour
 
     public UI_StatBar thistBar, hungerBar, energyBar;
 
+    public static Player me;
+
+    public int coffeCups;
+
+    public List<GameObject> cupCovers;
+
     // Start is called before the first frame update
     void Start()
     {
+        me = this;
         energy = maxEnergy;
         hunger = maxHunger;
         thirst = maxThirst;
@@ -52,6 +59,26 @@ public class Player : MonoBehaviour
         hungerBar.updateBar(hunger, maxHunger);
         energyBar.updateBar(energy, maxEnergy);
 
+    }
+
+    public void pick_up_coffe()
+    {
+        cupCovers[coffeCups].SetActive(false);
+        coffeCups += 1;
+    }
+
+    public bool deliver_coffe()
+    {
+        if (coffeCups > 0)
+        {
+            coffeCups -= 1;
+            cupCovers[coffeCups].SetActive(true);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 
