@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -29,6 +30,18 @@ public class Player : MonoBehaviour
 
     public List<GameObject> cupCovers;
 
+    public int fails = 0;
+
+    public List<GameObject> failCovers;
+
+    public TMPro.TextMeshProUGUI scoreText, endScoreText;
+
+    public float score;
+
+    public bool over;
+
+    public GameObject lostMenu;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,24 +54,42 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Call the code for moveing the character
-        MovementCode();
-
-        //Code for the characters needs
-        float factors = 1;
-        if(body.velocity.magnitude > 1)
+        if (!over)
         {
-            factors += 0.5f;
+            //Call the code for moveing the character
+            MovementCode();
+
+            //Code for the characters needs
+            float factors = 1;
+            if (body.velocity.magnitude > 1)
+            {
+                factors += 0.5f;
+            }
+
+            thirst -= thirstTick * Time.deltaTime * factors;
+            hunger -= hungerTick * Time.deltaTime * factors;
+            energy -= energyTick * Time.deltaTime * factors;
+
+            thistBar.updateBar(thirst, maxThirst);
+            hungerBar.updateBar(hunger, maxHunger);
+            energyBar.updateBar(energy, maxEnergy);
+
         }
+    }
 
-        thirst -= thirstTick * Time.deltaTime * factors;
-        hunger -= hungerTick * Time.deltaTime * factors;
-        energy -= energyTick * Time.deltaTime * factors;
-
-        thistBar.updateBar(thirst, maxThirst);
-        hungerBar.updateBar(hunger, maxHunger);
-        energyBar.updateBar(energy, maxEnergy);
-
+    public void fail_coffe()
+    {
+        if(fails < 3)
+        {
+            failCovers[fails].SetActive(false);
+            fails++;
+        }
+        else
+        {
+            Debug.Log("game over");
+            over = true;
+            endGame();
+        }
     }
 
     public void pick_up_coffe()
@@ -71,6 +102,8 @@ public class Player : MonoBehaviour
     {
         if (coffeCups > 0)
         {
+            score += 5;
+            scoreText.text = "$" + score;
             coffeCups -= 1;
             cupCovers[coffeCups].SetActive(true);
             return true;
@@ -171,5 +204,16 @@ public class Player : MonoBehaviour
                 face.sprite = sprites[0];
             }
         }
+    }
+
+    public void endGame()
+    {
+        endScoreText.text = "YOU MADE: $" + score;
+        lostMenu.SetActive(true);
+    }
+
+    public void goToScene(int i)
+    {
+        SceneManager.LoadScene(i);
     }
 }
