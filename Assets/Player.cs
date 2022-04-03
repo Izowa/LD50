@@ -74,6 +74,13 @@ public class Player : MonoBehaviour
             hungerBar.updateBar(hunger, maxHunger);
             energyBar.updateBar(energy, maxEnergy);
 
+
+            if (thirst <= 0 || energy <= 0 || hunger <= 0)
+            {
+                Debug.Log("game over");
+                over = true;
+                endGame();
+            }
         }
     }
 
